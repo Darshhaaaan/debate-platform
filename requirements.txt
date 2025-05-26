@@ -1,0 +1,13 @@
+Flask
+flask-mysqldb
+python-dotenv
+werkzeug
+itsdangerous
+email-validator
+google-generativeai
+whisper
+soundfile
+kokoro
+numpy
+MySQL-python; platform_system == "Linux"
+mysqlclient; platform_system != "Linux"

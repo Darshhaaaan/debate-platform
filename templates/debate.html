@@ -1,0 +1,62 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+  <title>Debate with AI</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 500px;
+      margin: auto;
+      text-align: center;
+    }
+    .output {
+      margin-top: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Debate with AI</h2>
+
+    <form id="debateForm" enctype="multipart/form-data">
+      <input type="file" name="audio" accept="audio/*" required><br><br>
+      <button type="submit">Submit Debate Audio</button>
+    </form>
+
+    <div class="output" id="outputArea" style="display: none;">
+      <h3>AI Response Audio</h3>
+      <audio id="responseAudio" controls></audio>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('debateForm');
+    const outputArea = document.getElementById('outputArea');
+    const responseAudio = document.getElementById('responseAudio');
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const response = await fetch('/submit-audio', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) {
+        alert("Something went wrong. Please try again.");
+        return;
+      }
+
+      const blob = await response.blob();
+      const audioURL = URL.createObjectURL(blob);
+      responseAudio.src = audioURL;
+      outputArea.style.display = 'block';
+    });
+  </script>
+</body>
+</html>

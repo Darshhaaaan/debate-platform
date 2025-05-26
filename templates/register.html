@@ -1,0 +1,65 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <title>Register</title>
+</head>
+<body>
+
+    <div class="container">
+        <h2 class="word">Register</h2>
+
+        <form action="{{ url_for('register') }}" method="post">
+            <div>{{ msg|safe }}</div>
+
+            <input class="textbox" type="text" name="username" placeholder="Enter Username" required>
+            <input type="password" id="password" name="password" required oninput="checkPasswordStrength()">
+            <ul id="passwordCriteria" style="color: red; list-style: none; padding: 0;">
+            <li id="uppercase">✖ password should contain at least one uppercase letter</li>
+            <li id="lowercase">✖ password should contain at least one lowercase letter</li>
+            <li id="number">✖ password should contain at least one number</li>
+            <li id="passSize">✖ password should be more than 8 characters in size</li></ul>            
+            <input class="textbox" type="email" name="email" placeholder="Enter Email" required>
+
+            <button class="btn" type="submit" id="regBtn">Register</button>
+        </form>
+
+        <p class="bottom">Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+    </div>
+
+</body>
+<script>
+function checkPasswordStrength() {
+    let passCheck = document.getElementById('password').value;
+    let passCheckSize = passCheck.length;
+    console.log(passCheckSize)
+    if(passCheck != ''){
+        document.getElementById('passwordCriteria').style.display = "block";
+    }
+    const password = document.getElementById("password").value;
+
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasLowercase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+
+    document.getElementById("uppercase").textContent = (hasUppercase ? "✔" : "✖") + " password should contain least one uppercase letter";
+    document.getElementById("lowercase").textContent = (hasLowercase ? "✔" : "✖") + " password should contain at least one lowercase letter";
+    document.getElementById("number").textContent = (hasNumber ? "✔" : "✖") + " password should contain at least one number";
+    document.getElementById("passSize").textContent = (passCheckSize > 8 ? "✔" : "✖") + " password should be more than 8 characters in size";
+    document.getElementById("uppercase").style.color = hasUppercase ? "green" : "red";
+    document.getElementById("lowercase").style.color = hasLowercase ? "green" : "red";
+    document.getElementById("number").style.color = hasNumber ? "green" : "red";
+    document.getElementById("passSize").style.color = (passCheckSize > 8 ? "green" : "red")
+
+    const registerBtn = document.getElementById("regBtn");
+
+    if (hasUppercase && hasLowercase && hasNumber && passCheckSize > 8) {
+        registerBtn.disabled = false;
+    } else {
+        registerBtn.disabled = true;
+    }
+
+}
+</script>
+</html>
