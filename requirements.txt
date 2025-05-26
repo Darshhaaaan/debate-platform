@@ -1,13 +1,12 @@
-Flask
-flask-mysqldb
-python-dotenv
-werkzeug
-itsdangerous
-email-validator
-google-generativeai
-whisper
-soundfile
-kokoro
-numpy
-MySQL-python; platform_system == "Linux"
-mysqlclient; platform_system != "Linux"
+Flask==3.0.3
+Flask-MySQLdb==2.1.1
+python-dotenv==1.0.1
+Werkzeug==3.0.1
+itsdangerous==2.1.2
+email-validator==2.1.1
+google-generativeai==0.4.2
+whisper==1.1.10
+soundfile==0.12.1
+kokoro==0.0.7
+numpy==1.26.4
+mysqlclient==2.2.4
