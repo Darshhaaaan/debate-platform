@@ -16,6 +16,11 @@
     .output {
       margin-top: 1.5rem;
     }
+    #aiText {
+      margin-top: 1rem;
+      font-style: italic;
+      color: #333;
+    }
   </style>
 </head>
 <body>
@@ -28,35 +33,37 @@
     </form>
 
     <div class="output" id="outputArea" style="display: none;">
-      <h3>AI Response Audio</h3>
-      <audio id="responseAudio" controls></audio>
-    </div>
+  <h3>AI Response</h3>
+  <p id="aiText"></p>
+  <audio id="responseAudio" controls></audio>
+</div>
   </div>
 
   <script>
-    const form = document.getElementById('debateForm');
-    const outputArea = document.getElementById('outputArea');
-    const responseAudio = document.getElementById('responseAudio');
+  const form = document.getElementById('debateForm');
+  const outputArea = document.getElementById('outputArea');
+  const responseAudio = document.getElementById('responseAudio');
+  const aiText = document.getElementById('aiText');
 
-    form.addEventListener('submit', async function (e) {
-      e.preventDefault();
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
 
-      const formData = new FormData(form);
-      const response = await fetch('/submit-audio', {
-        method: 'POST',
-        body: formData
-      });
-
-      if (!response.ok) {
-        alert("Something went wrong. Please try again.");
-        return;
-      }
-
-      const blob = await response.blob();
-      const audioURL = URL.createObjectURL(blob);
-      responseAudio.src = audioURL;
-      outputArea.style.display = 'block';
+    const formData = new FormData(form);
+    const response = await fetch('/submit-audio', {
+      method: 'POST',
+      body: formData
     });
-  </script>
+
+    if (!response.ok) {
+      alert("Something went wrong. Please try again.");
+      return;
+    }
+
+    const data = await response.json();
+    aiText.textContent = data.ai_text;
+    responseAudio.src = data.audio_url;
+    outputArea.style.display = 'block';
+  });
+</script>
 </body>
 </html>

@@ -43,22 +43,6 @@ API_KEY = os.getenv("GEMINI_API_KEY")
 bot = VoiceBot(api_key=API_KEY, system_prompt="YOU ARE A DEBATOR")
 
 
-@app.route('/submit-audio', methods=['POST'])
-def handle_audio():
-    if 'audio' not in request.files:
-        return "No audio file", 400
-
-    audio_file = request.files['audio']
-    save_path = os.path.join("uploads", audio_file.filename)
-    os.makedirs("uploads", exist_ok=True)
-    audio_file.save(save_path)
-
-    user_text = bot.generate_text(save_path)
-    bot_response = bot.generate_response(user_text)
-    ai_voice_path = bot.generate_audio(bot_response)
-
-    return send_file(ai_voice_path, as_attachment=True)
-
 
 if __name__ == "__main__":
     app.run(debug=True)

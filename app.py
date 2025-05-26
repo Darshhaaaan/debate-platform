@@ -1,15 +1,18 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, send_file, jsonify
 from flask_mysqldb import MySQL
 from dotenv import load_dotenv
+from pathlib import Path
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer
 from email.message import EmailMessage
 from preprocess import VoiceBot
-
 import MySQLdb.cursors
 import smtplib
 import re
 import os 
+import uuid
+import numpy as np
+import soundfile as sf
 
 load_dotenv()
 
@@ -156,5 +159,35 @@ def debate_page():
     if 'loggedin' in session:
         return render_template('debate.html')
     return redirect(url_for('login'))
+@app.route('/submit-audio', methods=['POST'])
+def submit_audio():
+    if 'audio' not in request.files:
+        return jsonify({"error": "No audio uploaded"}), 400
+
+    audio_file = request.files['audio']
+    filename = str(uuid.uuid4()) + ".wav"
+    audio_path = os.path.join("uploads", filename)
+    os.makedirs("uploads", exist_ok=True)
+    audio_file.save(audio_path)
+
+    # Convert audio to text
+    user_text = voicebot.generate_text(audio_path)
+
+    # Generate AI response from text
+    ai_response = voicebot.generate_response(user_text)
+
+    # Save AI-generated audio to Downloads folder
+    from pathlib import Path
+    downloads_path = str(Path.home() / "Downloads")
+    os.makedirs(downloads_path, exist_ok=True)
+    output_filename = f"{uuid.uuid4()}.wav"
+    output_path = os.path.join(downloads_path, output_filename)
+
+    voicebot.generate_audio(ai_response, output_path)
+
+    return jsonify({
+        "ai_text": ai_response,
+        "audio_url": f"Saved to Downloads as: {output_filename}"
+    })
 if __name__ == '__main__':
     app.run(debug=True)
